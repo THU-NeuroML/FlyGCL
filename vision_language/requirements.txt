@@ -1,0 +1,20 @@
+# Versions below are the versions recorded in the historical `continual`
+# environment used by the recovered runs.  PyTorch/CUDA should be installed
+# first from the matching official PyTorch index (see README).
+numpy==1.24.4
+scipy==1.8.1
+pandas==1.4.3
+continuum==1.2.7
+hydra-core==1.2.0
+omegaconf==2.2.3
+Pillow==9.2.0
+scikit-image==0.19.3
+tqdm>=4.66
+ftfy
+regex
+open-clip-torch
+PyYAML
+
+# OpenAI CLIP has no stable PyPI release used by these experiments.
+git+https://github.com/openai/CLIP.git
+

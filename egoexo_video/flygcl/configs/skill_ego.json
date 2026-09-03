@@ -1,0 +1,37 @@
+{
+  "seed": 42,
+  "benchmark": "skill",
+  "view": "ego",
+  "skill_head": "ranking",
+  "method": "flygcl_ego_temporal_moe",
+  "data": {
+    "ego_root": "data/ego_feature",
+    "exo_root": "data/exo_feature",
+    "train_pairs": "datasets/skill_train.txt",
+    "val_pairs": "datasets/skill_val.txt",
+    "exo_split_seed": 42,
+    "exo_val_ratio": 0.2
+  },
+  "model": {
+    "input_dim": 1024,
+    "num_tokens": 10
+  },
+  "skill_ego": {
+    "hidden_dim": 256,
+    "dropout": 0.12,
+    "epochs_by_task": [8, 10, 6, 4],
+    "learning_rate": 0.0002,
+    "global_learning_rate": 0.00012,
+    "weight_decay": 0.0005,
+    "ema_decay": 0.985,
+    "synthetic_pair_ratio": 0.30,
+    "bt_iterations": 500,
+    "token_dropout": 0.08,
+    "noise_std": 0.008,
+    "consistency_weight": 0.10,
+    "global_weight": 0.65,
+    "replay_batches_per_task": 8,
+    "replay_weight": 0.55,
+    "distill_weight": 0.35
+  }
+}

@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage*
+
+# Environments and editors
+.venv/
+venv/
+.env
+.env.*
+.idea/
+.vscode/
+.DS_Store
+*.code-workspace
+*.swp
+*.swo
+*~
+*.bak
+*_backup*
+
+# Experiment artifacts
+outputs/
+output/
+logs/
+artifacts/
+runs/
+results/
+checkpoints/
+wandb/
+tensorboard/
+slurm-*.out
+*.ckpt
+*.pth
+*.pt
+*.safetensors
+*.onnx
+
+# Local data, caches, and downloaded models
+data/
+datasets/raw/
+.cache/
+hf_cache/
+/egoexo_video/datasets/
+/vision_language_action/online/models/
+/vision_language_action/offline/models/
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.bag
+*.h5
+*.hdf5
+
+# Build artifacts
+build/
+dist/
+
+# Local archives and notebooks
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.ipynb

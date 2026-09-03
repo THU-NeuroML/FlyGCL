@@ -1,0 +1,45 @@
+seed: 42
+benchmark: skill
+view: ego_exo
+skill_head: ranking
+method: flyprompt
+output_root: outputs/skill_tl_anchor
+
+data:
+  ego_root: data/ego_feature
+  exo_root: data/exo_feature
+  train_pairs: datasets/skill_train.txt
+  val_pairs: datasets/skill_val.txt
+  exo_split_seed: 42
+  exo_val_ratio: 0.2
+
+model:
+  input_dim: 1024
+  num_tokens: 10
+  attention_hidden_dim: 256
+  num_filters: 3
+
+flyprompt:
+  expansion_dim: 5000
+  ridge: 10000.0
+  init_std: 0.05
+  init_gate: 0.2
+  normalize_router: false
+
+loss:
+  margin: 1.0
+  triplet_weight: 0.1
+  triplet_margin: null
+
+training:
+  epochs_per_task: 1
+  batch_size: 32
+  lr: 0.0002
+  weight_decay: 0.000001
+
+runtime:
+  device: cuda
+  num_workers: 4
+  max_train_batches: null
+  max_eval_batches: null
+  max_router_batches: null

@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+
+# Copyright 2024 The HuggingFace Inc. team. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import importlib
+
+import gymnasium as gym
+
+from lerobot.envs.configs import AlohaEnv, EnvConfig, LiberoEnv, HILEnvConfig, PushtEnv, XarmEnv
+
+
+def make_env_config(env_type: str, **kwargs) -> EnvConfig:
+    if env_type == "aloha":
+        return AlohaEnv(**kwargs)
+    elif env_type == "libero":
+        return LiberoEnv(**kwargs)
+    elif env_type == "pusht":
+        return PushtEnv(**kwargs)
+    elif env_type == "xarm":
+        return XarmEnv(**kwargs)
+    elif env_type == "hil":
+        return HILEnvConfig(**kwargs)
+    else:
+        raise ValueError(f"Policy type '{env_type}' is not available.")
+
+
+def make_env(cfg: EnvConfig, n_envs: int = 1, use_async_envs: bool = False) -> gym.vector.VectorEnv | None:
+    """Makes a gym vector environment according to the config.
+
+    Args:
+        cfg (EnvConfig): the config of the environment to instantiate.
+        n_envs (int, optional): The number of parallelized env to return. Defaults to 1.
+        use_async_envs (bool, optional): Whether to return an AsyncVectorEnv or a SyncVectorEnv. Defaults to
+            False.
+
+    Raises:
+        ValueError: if n_envs < 1
+        ModuleNotFoundError: If the requested env package is not installed
+
+    Returns:
+        gym.vector.VectorEnv: The parallelized gym.env instance.
+    """
+    if n_envs < 1:
+        raise ValueError("`n_envs must be at least 1")
+
+    package_name = f"gym_{cfg.type}"
+
+    try:
+        importlib.import_module(package_name)
+    except ModuleNotFoundError as e:
+        print(f"{package_name} is not installed. Please install it with `pip install 'lerobot[{cfg.type}]'`")
+        raise e
+
+    # 扰动benchmark需要用特殊的env id
+    perturb_benchmarks = ["libero_10_task", "libero_goal_task", "libero_object_task", "libero_spatial_task"]
+    if hasattr(cfg, 'benchmark') and cfg.benchmark in perturb_benchmarks:
+        # 把task名字中的_Task_N变成_Perturb_Task_N
+        import re
+        task_name = re.sub(r'(Libero_\w+?)_Task_(\d+)', r'\1_Perturb_Task_\2', cfg.task)
+        gym_handle = f"{package_name}/{task_name}"
+    else:
+        gym_handle = f"{package_name}/{cfg.task}"
+
+    # batched version of the env that returns an observation of shape (b, c)
+    env_cls = gym.vector.AsyncVectorEnv if use_async_envs else gym.vector.SyncVectorEnv
+    env_kwargs = {}
+    if use_async_envs:
+        # Libero observations include a Text space, which AsyncVectorEnv cannot batch with shared memory enabled.
+        env_kwargs["shared_memory"] = False
+    env = env_cls(
+        [lambda: gym.make(gym_handle, disable_env_checker=True, **cfg.gym_kwargs) for _ in range(n_envs)],
+        **env_kwargs,
+    )
+
+    return env

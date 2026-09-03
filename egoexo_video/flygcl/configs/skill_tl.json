@@ -1,0 +1,29 @@
+{
+  "seed": 42,
+  "benchmark": "skill",
+  "view": "ego_exo",
+  "skill_head": "tl",
+  "method": "flygcl",
+  "data": {
+    "ego_root": "data/ego_feature",
+    "exo_root": "data/exo_feature",
+    "train_pairs": "datasets/skill_train.txt",
+    "val_pairs": "datasets/skill_val.txt",
+    "exo_split_seed": 42,
+    "exo_val_ratio": 0.2
+  },
+  "model": {
+    "input_dim": 1024,
+    "num_tokens": 10
+  },
+  "flygcl": {
+    "hidden_dim": 192,
+    "exo_references": 4,
+    "snapshot_decay": 0.2,
+    "fusion_alpha": 0.56,
+    "fusion_tau": 2.5,
+    "epochs_by_task": [12, 16, 10, 8],
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0005
+  }
+}

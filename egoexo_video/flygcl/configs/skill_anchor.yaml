@@ -1,0 +1,6 @@
+_base_: skill_anchor_base.yaml
+benchmark: skill
+view: ego_exo
+skill_head: tl
+method: flyprompt
+output_root: outputs/skill_tl_anchor/seed_42

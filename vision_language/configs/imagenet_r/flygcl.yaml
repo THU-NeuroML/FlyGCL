@@ -1,0 +1,99 @@
+# @package _global_
+
+hydra:
+  run:
+    dir: ${oc.env:FLYGCL_OUTPUT_DIR,./outputs/imagenet_r}/${now:%Y%m%d_%H%M%S}_seed${seed}
+  job:
+    chdir: true
+
+# FlyGCL configuration for ImageNet-R.
+dataset: imagenet_R
+dataset_root: ./data/imagenet-r
+model_name: ViT-B/16
+prompt_template: a good photo of a {}.
+method: fly_clip_text_linear_ema
+run_method_tag: flygcl_imagenet_r
+
+gcl_disjoint_ratio: 50
+gcl_blurry_ratio: 50
+gcl_sessions: 10
+stream_seed: ${seed}
+session_epochs: 1
+strict_session_budget: true
+eval_every_n_batches: 999999
+
+fly_mode: lora
+fly_expert_warmup_mode: mean_previous_experts
+fly_expert_warmup_modes: [mean_previous_experts, previous_session_expert]
+fly_lora_rank: 8
+fly_lora_alpha: 16.0
+len_prompt: 20
+pos_prompt: [0, 1, 2, 3, 4]
+rp_dim: 10000
+rp_ridge: 10000.0
+ema_ratio: [0.9, 0.99]
+ensemble_method: softmax_max_prob
+fly_adapter_down_dim: 52
+fly_adapter_dropout: 0.10
+fly_adapter_scale: 0.5
+fly_adapter_warmup_steps: 200
+text_expert_type: lora
+text_adapter_down_dim: 52
+text_adapter_dropout: 0.10
+text_adapter_scale: 0.5
+text_adapter_warmup_steps: 200
+text_lora_rank: 8
+text_lora_alpha: 16.0
+text_lora_impl: seq
+text_lora_mode: vision+only_kv+text
+use_text_ema: false
+linear_ema_count: 2
+text_online_train_weight: 0.7
+linear_head_bias: true
+tune_logit_scale: false
+fly_attr_enable: false
+
+optimizer: adamw
+lr: 0.0005
+weight_decay: 0.0005
+train_batch_size: 64
+batch_size: 64
+num_workers: 4
+beta1: 0.9
+beta2: 0.999
+optimizer_eps: 1.0e-8
+momentum: 0.9
+nesterov: false
+scheduler: cosine
+warmup_ratio: 0.1
+warmup_steps: -1
+min_lr_ratio: 0.1
+grad_clip_norm: 1.0
+label_smoothing: 0.0
+aux_loss_coeff: 1.0
+log_batch_interval: 10
+seed: 2
+
+lora_rank: 8
+lora_mode: vision+only_kv+text
+reset: false
+only_reset_B: false
+freeze_A: false
+all_test: false
+scenario: gcl
+initial_increment: null
+increment: null
+task_num: null
+class_order: null
+real_replay: false
+balance_ft: false
+balance_epochs: 0
+workdir: ''
+log_path: gcl_metrics.json
+path:
+  dataset_root: ''
+  workdir: ''
+  log_path: gcl_metrics.json
+
+enable_seq_lora_analysis: false
+enable_groupwise_analysis: false

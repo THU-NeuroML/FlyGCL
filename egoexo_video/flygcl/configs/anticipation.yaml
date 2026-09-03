@@ -1,0 +1,35 @@
+seed: 42
+data:
+  annotation_root: data/anticipation_annotations
+  segments: 10
+stream:
+  sessions: 4
+  r_D: 0.50
+  r_B: 0.30
+model:
+  hidden_dim: 256
+  dropout: 0.15
+training:
+  optimizer: AdamW
+  lr: 0.0003
+  weight_decay: 0.0005
+  batch_size: 128
+  epochs_per_session: 3
+  replay_per_session: 800
+  negative_focal_gamma: 2.0
+  asymmetric_weight: 0.5
+  distill_weight: 0.5
+evaluation:
+  split: val
+  metric: global_macro_top5_recall
+  # Primary CL metrics need only the merged global curve. Disabling the
+  # redundant task-wise diagnostic halves full-run evaluation I/O.
+  task_matrix_diagnostic: false
+  prototype_weight: 0.35
+  prior_tau: 0.20
+runtime:
+  device: cuda
+  num_workers: 4
+  # Zero disables sampling caps: all available train/evaluation records are used.
+  max_train_samples_per_view: 0
+  max_eval_samples_per_view: 0
